@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agenda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        form input, form button {
+            width: calc(100% - 22px);
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+
+        .contact-info {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .contact-info span {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .date-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .date-value {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Agenda</h1>
+
+    <button onclick="mostrarFormulario()">Agregar Cliente</button>
+
+    <form id="agendaForm" style="display:none;">
+        <h2>Agregar Cliente</h2>
+        Nombre: <input type="text" id="nombre"><br>
+        Correo: <input type="email" id="correo"><br>
+        Contraseña: <input type="text" id="contrasena"><br>
+        Pantalla: <input type="text" id="pantalla"><br>
+        Fecha de Activación: <input type="date" id="fecha"><br>
+        Fecha de Renovación: <input type="date" id="fechaRenovacion"><br>
+        
+        <input type="button" value="Guardar" onclick="guardarContacto()">
+    </form>
+
+    <h2>Contactos</h2>
+    <ul id="listaContactos"></ul>
+
+    <script>
+        function mostrarFormulario() {
+            var formulario = document.getElementById("agendaForm");
+            formulario.style.display = "block";
+        }
+
+        function guardarContacto() {
+            var nombre = document.getElementById("nombre").value;
+            var correo = document.getElementById("correo").value;
+            var contrasena = document.getElementById("contrasena").value;
+            var pantalla = document.getElementById("pantalla").value;
+            var fechaRenovacion = document.getElementById("fechaRenovacion").value;
+            var fecha = document.getElementById("fecha").value;
+
+            var nuevoContacto = {
+                nombre: nombre,
+                correo: correo,
+                contrasena: contrasena,
+                pantalla: pantalla,
+                fechaRenovacion: fechaRenovacion,
+                fecha: fecha
+            };
+
+            var listaContactos = JSON.parse(localStorage.getItem("contactos")) || [];
+            listaContactos.push(nuevoContacto);
+            localStorage.setItem("contactos", JSON.stringify(listaContactos));
+
+            mostrarContactos();
+        }
+
+        function eliminarContacto(index) {
+            var listaContactos = JSON.parse(localStorage.getItem("contactos"));
+            listaContactos.splice(index, 1);
+            localStorage.setItem("contactos", JSON.stringify(listaContactos));
+
+            mostrarContactos();
+        }
+
+        function mostrarContactos() {
+            var listaContactos = JSON.parse(localStorage.getItem("contactos"));
+            var listaElemento = document.getElementById("listaContactos");
+            listaElemento.innerHTML = "";
+
+            for (var i = 0; i < listaContactos.length; i++) {
+                var contacto = listaContactos[i];
+                var elemento = document.createElement("li");
+                elemento.innerHTML = `
+                    <div class="contact-info">
+                        <span>Nombre:</span> ${contacto.nombre}<br>
+                        <span>Correo:</span> ${contacto.correo}<br>
+                        <span>Contraseña:</span> ${contacto.contrasena}<br>
+                        <span>Pantalla:</span> ${contacto.pantalla}<br>
+                        <span>Fecha de Renovación:</span> ${contacto.fechaRenovacion}<br>
+                        <span>Fecha:</span> ${contacto.fecha}<br>
+                    </div>
+                    <button class="delete-button" onclick="eliminarContacto(${i})">Eliminar</button>
+                `;
+                listaElemento.appendChild(elemento);
+            }
+        }
+
+        mostrarContactos();
+    </script>
+</body>
+</html>
