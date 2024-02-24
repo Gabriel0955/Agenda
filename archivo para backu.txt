@@ -1,0 +1,32 @@
+Respaldo de aplicativo
+Por medio de un shell
+
+para ejecutar un shell: sh -x ejemplo.sh
+
+/apps/devop/backup/respaldoBD/
+
+crontab -l
+
+#Respaldo MYSQL Kanboard
+0 1 * * *            sh /apps/devop/backup/respaldoBD/export_full.sh
+/home/user/desktop/practica-crontab/mysqldump.sh
+cuando se ejecuta    comando a ejecutar
+
+## Respaldo de todas las bases mysql
+rutaaplicativo=/backup/kanboard_respaldo/aplicativo
+rutabd=/backup/kanboard_respaldo/basekanboard
+fecha=`date +%Y%m%d`
+anterior=`date -d "-2 days" +%Y%m%d`
+
+
+mysqldump -uroot -ptoorkanboard --databases dolibarr elgg kanboardclaro openfire wordpress wordpress39 sonarqube --max_allowed_packet=1024M  | 
+gzip > $rutabd/all_bases_$fecha.sql.gz
+
+tar -czvf $rutaaplicativo/aplicativo_$fecha.tar.gz -C /apps/devop/www/ kanboardclaro
+
+
+rm -f $rutabd/all_bases_$anterior.sql.gz
+
+rm -f $rutaaplicativo/aplicativo_$anterior.tar.gz
+
+28 16 * * * sudo sh /var/www/html/respaldo_reservas/respaldo_aplicativo.sh >> /var/www/html/respaldo_reservas/
